@@ -6,7 +6,7 @@ ha_category:
 ha_iot_class: Cloud Push
 ha_release: 0.104
 ha_codeowners:
-  - '@bbernhard'
+  - "@bbernhard"
 ha_domain: signal_messenger
 ha_platforms:
   - notify
@@ -20,15 +20,13 @@ ha_quality_scale: legacy
 The `signal_messenger` {% term integration %} uses the [Signal Messenger REST API](https://github.com/bbernhard/signal-cli-rest-api) to deliver notifications from Home Assistant to your Android or iOS device.
 
 ## Setup
- 
+
 The requirements are:
 
-- You need to set up the Signal Messenger REST API. 
-- You need a spare phone number to register with the Signal Messenger service. 
+- You need to set up the Signal Messenger REST API.
+- You need a spare phone number to register with the Signal Messenger service
 
-
-Please follow those [instructions](https://github.com/bbernhard/signal-cli-rest-api/blob/master/doc/HOMEASSISTANT.md), to set up the Signal Messenger REST API. 
-
+Please follow those [instructions](https://github.com/bbernhard/signal-cli-rest-api/blob/master/doc/HOMEASSISTANT.md), to set up the Signal Messenger REST API.
 
 ## Configuration
 
@@ -36,11 +34,11 @@ To send Signal Messenger notifications with Home Assistant, add the following to
 {% include integrations/restart_ha_after_config_inclusion.md %}
 
 ```yaml
-# Example configuration.yaml entry for Signal Messenger 
+# Example configuration.yaml entry for Signal Messenger
 notify:
   - name: signal
     platform: signal_messenger
-    url: "http://127.0.0.1:8080" # the URL where the Signal Messenger REST API is listening 
+    url: "http://127.0.0.1:8080" # the URL where the Signal Messenger REST API is listening
     number: "YOUR_PHONE_NUMBER" # the sender number
     recipients: # one or more default recipients (can be overwritten per message)
       - "RECIPIENT1"
@@ -51,30 +49,47 @@ However, it's not possible to mix phone numbers and Signal Messenger groups in a
 If you would like to have individual phone numbers and Signal Messenger groups in the default `recipients` list,
 separate notifiers need to be created.
 
-To obtain the Signal Messenger group ids, follow [this guide]( https://github.com/bbernhard/signal-cli-rest-api/blob/master/doc/HOMEASSISTANT.md).
+To obtain the Signal Messenger group ids, follow [this guide](https://github.com/bbernhard/signal-cli-rest-api/blob/master/doc/HOMEASSISTANT.md).
 
 {% configuration %}
 name:
-  description: Setting the optional parameter `name` allows multiple notifiers to be created. The notifier will bind to the `notify.NOTIFIER_NAME` action.
-  required: false
-  type: string
-  default: notify
+description: Setting the optional parameter `name` allows multiple notifiers to be created. The notifier will bind to the `notify.NOTIFIER_NAME` action.
+required: false
+type: string
+default: notify
 url:
-  description: The URL where the Signal Messenger REST API listens for incoming requests. 
-  required: true
-  type: string
+description: The URL where the Signal Messenger REST API listens for incoming requests.
+required: true
+type: string
 number:
-  description: The sender number.
-  required: true
-  type: string
+description: The sender number.
+required: true
+type: string
 recipients:
-  description: A list of default recipients (either phone numbers or Signal Messenger group ids). It can be overwritten for individual messages.
-  required: true
-  type: list
-  items:
-    type: string
+description: A list of default recipients (either phone numbers or Signal Messenger group ids). It can be overwritten for individual messages.
+required: true
+type: list
+items:
+type: string
 {% endconfiguration %}
 
+### Basic Auth
+
+If Signal Messenger is running behind a Proxy with Basic Auth requirements, you need to add `auth` to your config and specify the user and password respectively.
+
+```yaml
+# Basic Auth example for Signal Messenger
+notify:
+  - name: signal
+    platform: signal_messenger
+    url: "http://127.0.0.1:8080"
+    auth:
+      user: "BASIC_AUTH_USER"
+      password: "BASIC_AUTH_PASSWORD"
+    number: "YOUR_PHONE_NUMBER"
+    recipients:
+      - "RECIPIENT1"
+```
 
 ## Notification action
 
@@ -85,33 +100,33 @@ A few examples on how to use this integration to send notifications from automat
 #### Text message
 
 ```yaml
-...
+---
 actions:
   - action: notify.NOTIFIER_NAME
     data:
       message: "That's an example that sends a simple text message to the recipients specified in the configuration.yaml. If text mode is 'styled', you can use *italic*, **bold** or ~strikethrough~ ."
       # optional: custom recipients list
       target:
-        - '+4917011111111'
+        - "+4917011111111"
       # optional: formatted mode
       data:
         text_mode: styled
 ```
 
 | Attribute | Optional   | Default                                         | Description                                                                                                       |
-|-----------|------------|-------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
-| target    | *optional* | as configured via `recipients` for the `notify` | a list of strings, containing either fully qualified phone numbers (including country prefix) or Signal group IDs |
+| --------- | ---------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| target    | _optional_ | as configured via `recipients` for the `notify` | a list of strings, containing either fully qualified phone numbers (including country prefix) or Signal group IDs |
 
-| Data Attribute | Optional | Default |Description                                                                                                                                                                                          |
-|----------------| -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `text_mode`    | *optional* | normal | Accepted values are `normal` or `styled`. If set to `styled`, additional text formatting is enabled (*`*italic*`*, **`**bold**`**, and ~~`~strikethrough~`~~). |
+| Data Attribute | Optional   | Default | Description                                                                                                                                                    |
+| -------------- | ---------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `text_mode`    | _optional_ | normal  | Accepted values are `normal` or `styled`. If set to `styled`, additional text formatting is enabled (*`*italic*`*, **`**bold**`**, and ~~`~strikethrough~`~~). |
 
 #### Text message with an attachment
 
 This example assumes you have an image stored in the default `www`-folder in Home Assistant Operating System.
 
 ```yaml
-...
+---
 actions:
   - action: notify.NOTIFIER_NAME
     data:
@@ -122,15 +137,15 @@ actions:
         text_mode: styled
 ```
 
-| Data attribute   | Optional | Default |Description                                                                                                                                                                                          |
-| ----------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `attachments` | **required** | -  | List of paths of files to be attached. |
-| `text_mode` | *optional* | normal | Accepted values are `normal` or `styled`. If set to `styled`, additional text formatting is enabled (*`*italic*`*, **`**bold**`**, and ~~`~strikethrough~`~~). |
+| Data attribute | Optional     | Default | Description                                                                                                                                                    |
+| -------------- | ------------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `attachments`  | **required** | -       | List of paths of files to be attached.                                                                                                                         |
+| `text_mode`    | _optional_   | normal  | Accepted values are `normal` or `styled`. If set to `styled`, additional text formatting is enabled (*`*italic*`*, **`**bold**`**, and ~~`~strikethrough~`~~). |
 
 #### Text message with an attachment from a URL
 
 ```yaml
-...
+---
 actions:
   - action: notify.NOTIFIER_NAME
     data:
@@ -142,11 +157,11 @@ actions:
         text_mode: styled
 ```
 
-| Data attribute   | Optional | Default |Description                                                                                                                                                                                          |
-| ----------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `urls` | **required** | -  | List of URLs of files to be attached. |
-| `verify_ssl` | *optional* | true  | Accepted values are `true`, `false`. You can set it to `false` to ignore SSL errors. |
-| `text_mode` | *optional* | normal | Accepted values are `normal` or `styled`. If set to `styled`, additional text formatting is enabled (*`*italic*`*, **`**bold**`**, and ~~`~strikethrough~`~~). |
+| Data attribute | Optional     | Default | Description                                                                                                                                                    |
+| -------------- | ------------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `urls`         | **required** | -       | List of URLs of files to be attached.                                                                                                                          |
+| `verify_ssl`   | _optional_   | true    | Accepted values are `true`, `false`. You can set it to `false` to ignore SSL errors.                                                                           |
+| `text_mode`    | _optional_   | normal  | Accepted values are `normal` or `styled`. If set to `styled`, additional text formatting is enabled (*`*italic*`*, **`**bold**`**, and ~~`~strikethrough~`~~). |
 
 **Notes:**
 
@@ -170,12 +185,12 @@ To accomplish this, make sure the addon's `mode` parameter is set to `native` or
       json_attributes_path: $[0].envelope
       json_attributes:
         - source #using attributes you can get additional information, in this case, the phone number.
-  ```
+```
 
 You can create an automation as follows:
 
 ```yaml
-...
+---
 triggers:
   - trigger: state
     entity_id:
